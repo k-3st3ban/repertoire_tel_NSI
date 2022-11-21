@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<h1>Répertoire Téléphonique</h1>
+<section>
+    <h2>Contacts <span>{{ contacts|length }}</span></h2>
+    {% if contacts|length > 0 %}
+    <ul>
+        {% for contact in contacts %}
+        <li>{{ contact.tel }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucun contact</p>
+    {% endif %}
+</section>
+{% endblock %}

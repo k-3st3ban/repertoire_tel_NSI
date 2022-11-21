@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.alert-red {
+    background-color: rgb(255, 221, 221);
+}
