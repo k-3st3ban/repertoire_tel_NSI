@@ -7,7 +7,11 @@
     {% if contacts|length > 0 %}
     <ul>
         {% for contact in contacts %}
-        <li>{{ contact.tel }}</li>
+        <li>
+            <a href="{{ url_for('contact_infos', contact_id=contact[0]) }}">
+                {{ contact }}
+            </a>
+        </li>
         {% endfor %}
     </ul>
     {% else %}
