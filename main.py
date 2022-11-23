@@ -27,16 +27,17 @@ def close_connection(exception):
         db.close()
 
 
-def db_query(query, args=(), first=False, commit=False):
+def db_query(query, args=(), first=False, commit=False, fetch=True):
     conn = get_db()
     cur = conn.cursor()
     cur.execute(query, args)
-    # TODO: argument to fetch or not?
-    results = cur.fetchall()
+    if fetch == True:
+        results = cur.fetchall()
     if commit == True:
         conn.commit()
     cur.close()
-    return (results[0] if results else None) if first else results
+    if fetch:
+        return (results[0] if results else None) if first else results
 
 
 @app.errorhandler(404)
@@ -66,7 +67,7 @@ def contact_add_post():
     else:
         info_contact = (prenom,  nom, tel)
         db_query(
-            "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=info_contact, commit=True)
+            "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=info_contact, commit=True, fetch=False)
     flash("Le contact a été ajouté", "green")
     return redirect(url_for("index"))
 
@@ -82,7 +83,8 @@ def contact_infos(contact_id):
 
 @app.get("/contact/<int:contact_id>/delete")
 def contact_delete(contact_id):
-    db_query(f"DELETE FROM CONTACT WHERE id={contact_id}", commit=True)
+    db_query(
+        f"DELETE FROM CONTACT WHERE id={contact_id}", commit=True, fetch=False)
     flash("Le contact a été supprimé", "red")
     return redirect(url_for("index"))
 
