@@ -2,4 +2,15 @@
 {% block title %}Ajouter{% endblock %}
 {% block content %}
 <h1>Ajouter Un Contact</h1>
+<form method="post">
+    <label for="prenom">Prénom:</label><br>
+    <input type="text" id="prenom" name="prenom"><br>
+    <label for="nom">Nom:</label><br>
+    <input type="text" id="nom" name="nom"><br>
+    <label for="nom">Téléphone:</label><br>
+    <input type="text" id="tel" name="tel"><br>
+    <input type="submit" value="Enregistrer le contact">
+  </form>
+  <br>
+  <li><a href={{ url_for('index') }}>Retour</a></li>
 {% endblock %}
