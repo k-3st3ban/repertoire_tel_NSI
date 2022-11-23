@@ -32,23 +32,19 @@ def contact_add_post():
     prenom = request.form['prenom']
     nom = request.form['nom']
     tel = request.form['tel']
-    error = None
-    if not prenom:
-        error = "Un prenom est nécessaire"
     if not tel:
-        error = "Un numéro de téléphone est nécessaire"
-    if error is not None:
-            flash(error)
-            return redirect(url_for("add.html"))
+        flash("Un numéro de téléphone est nécessaire", "yellow")
+        return redirect(url_for("contact_add_post"))
     else:
-            conn = sqlite3.connect(DATABASE_NAME)
-            cur = conn.cursor()
-            info_contact = (1,  nom, tel ) ### CHANGER LE 1
-            cur.execute("INSERT INTO CONTACT(id, name, tel) VALUES(?, ?, ?)", info_contact)
-            conn.commit()
-            cur.close()
-            conn.close()
-    flash("Le contact a été ajouté", "red")
+        conn = sqlite3.connect(DATABASE_NAME)
+        cur = conn.cursor()
+        info_contact = (prenom,  nom, tel)
+        cur.execute(
+            "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", info_contact)
+        conn.commit()
+        cur.close()
+        conn.close()
+    flash("Le contact a été ajouté", "green")
     return redirect(url_for("index"))
 
 
@@ -76,4 +72,3 @@ def contact_delete(contact_id):
 
 
 app.run(debug=True)
-
