@@ -8,7 +8,7 @@
     <ul>
         {% for contact in contacts %}
         <li>
-            <a href="{{ url_for('contact_infos', contact_id=contact[0]) }}">
+            <a href="{{ url_for('contact_infos', contact_id=contact.id) }}">
                 {{ contact }}
             </a>
         </li>
