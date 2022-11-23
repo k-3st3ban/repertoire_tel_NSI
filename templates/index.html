@@ -1,21 +1,18 @@
 {% extends 'layout.html' %}
 {% block title %}Accueil{% endblock %}
 {% block content %}
-<h1>Répertoire Téléphonique</h1>
-<section>
-    <h2>Contacts <span>{{ contacts|length }}</span></h2>
-    {% if contacts|length > 0 %}
-    <ul>
-        {% for contact in contacts %}
-        <li>
-            <a href="{{ url_for('contact_infos', contact_id=contact.id) }}">
-                {{ contact }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>Aucun contact</p>
-    {% endif %}
-</section>
+<h1>Contacts <span>{{ contacts|length }}</span></h1>
+{% if contacts|length > 0 %}
+<ul class="contacts-list">
+    {% for contact in contacts %}
+    <li>
+        <a href="{{ url_for('contact_infos', contact_id=contact.id) }}">
+            {{ contact|contact_label }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Aucun contact</p>
+{% endif %}
 {% endblock %}

@@ -16,16 +16,20 @@
             <li><a href={{ url_for('contact_add_page') }}>Ajouter</a></li>
         </ul>
     </header>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-    <ul>
-        {% for category, message in messages %}
-        <li class="alert alert-{{ category }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-    {% block content %} {% endblock %}
+    <main>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <ul>
+            {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <section class="main-container">
+            {% block content %} {% endblock %}
+        </section>
+    </main>
 </body>
 
 </html>

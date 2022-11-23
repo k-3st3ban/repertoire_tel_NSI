@@ -40,6 +40,18 @@ def db_query(query, args=(), first=False, commit=False, fetch=True):
         return (results[0] if results else None) if first else results
 
 
+@app.template_filter("contact_label")
+def contact_label(contact):
+    label = []
+    if not contact.get("first_name") and not contact.get("last_name"):
+        label.append(contact.get("tel"))
+    if contact.get("first_name"):
+        label.append(contact.get("first_name"))
+    if contact.get("last_name"):
+        label.append(contact.get("last_name"))
+    return " ".join(label)
+
+
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("404.html", title="404"), 404
