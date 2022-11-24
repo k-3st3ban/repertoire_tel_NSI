@@ -2,6 +2,12 @@
 {% block title %}Accueil{% endblock %}
 {% block content %}
 <h1>Contacts <span class="contacts-number">{{ contacts|length }}</span></h1>
+<h3>Rechercher Un Contact</h3>
+<form method="get">
+  <label for="nom">Rechercher par prenom, nom ou téléphone:</label>
+  <input type="text" id="rech" name="rech">
+  <input type="submit" value="Rechercher le contact">
+</form>
 {% if contacts|length > 0 %}
 <ul class="column-list">
     {% for contact in contacts %}
