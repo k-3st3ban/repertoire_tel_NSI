@@ -1,5 +1,7 @@
 :root {
     --main-bg-color: rgb(215, 215, 215);
+    --light-blue-color: rgb(220, 243, 255);
+    --darker-blue-color: rgb(118, 193, 255);
 }
 
 * {
@@ -53,7 +55,7 @@ main {
     font-size: 2.5rem;
 }
 
-.contacts-list {
+.column-list {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
@@ -61,18 +63,33 @@ main {
     gap: 20px;
 }
 
-.contacts-list a {
+.button-style,
+.input-style {
     border: 2px solid black;
     border-radius: 5px;
     padding: 4px 8px;
 }
 
-.contacts-list a:hover {
+.input-style {
+    font-size: 1rem;
+}
+
+.input-style:focus {
+    background-color: var(--light-blue-color);
+}
+
+.button-style {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-style:hover,
+.button-style:focus {
     background-color: var(--main-bg-color);
 }
 
 .contacts-number {
-    background-color: rgb(118, 193, 255);
+    background-color: var(--darker-blue-color);
     padding: 2px 7px;
     border-radius: 5px;
     border: 2px solid black;
