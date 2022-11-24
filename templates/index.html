@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block title %}Accueil{% endblock %}
 {% block content %}
-<h1>Contacts <span>{{ contacts|length }}</span></h1>
+<h1>Contacts <span class="contacts-number">{{ contacts|length }}</span></h1>
 {% if contacts|length > 0 %}
 <ul class="contacts-list">
     {% for contact in contacts %}
