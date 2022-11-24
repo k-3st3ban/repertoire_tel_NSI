@@ -93,6 +93,15 @@ def contact_infos(contact_id):
     return render_template("infos.html", contact=contact)
 
 
+@app.get("/contact/<int:contact_id>/edit")
+def contact_edit(contact_id):
+    contact = db_query(
+        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
+    if not contact:
+        return abort(404)
+    return render_template("edit.html", contact=contact)
+
+
 @app.get("/contact/<int:contact_id>/delete")
 def contact_delete(contact_id):
     db_query(

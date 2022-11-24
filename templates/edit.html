@@ -9,15 +9,15 @@
     {% endif %}
     <h1>{{ contact|contact_label }}</h1>
 </div>
-<ul class="column-list">
+<form class="column-list">
     {% for key, value in contact.items() %}
     {% if key != "id" %}
-    <li>
-        <h3>{{ key }}</h3>
-        <p>{{ value }}</p>
-    </li>
+    <div>
+        <label for="{{ key }}">{{ key }}</label>
+        <input id="{{ key }}" name="{{ key }}" type="text" placeholder="{{ key }}" value="{{ value }}">
+    </div>
     {% endif %}
     {% endfor %}
-</ul>
-<a href="{{ url_for('contact_edit', contact_id=contact.id) }}" class="button-style">Modifier</a>
+    <input class="button-style" type="submit" value="Enregistrer">
+</form>
 {% endblock %}

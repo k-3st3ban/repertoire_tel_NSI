@@ -88,6 +88,19 @@ main {
     background-color: var(--main-bg-color);
 }
 
+.contact-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.contact-title img {
+    width: 60px;
+    border-radius: 100%;
+    border: 2px solid black;
+}
+
 .contacts-number {
     background-color: var(--darker-blue-color);
     padding: 2px 7px;
