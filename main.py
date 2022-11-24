@@ -59,7 +59,15 @@ def page_not_found(error):
 
 @app.get("/")
 def index():
-    contacts = db_query("SELECT * FROM CONTACT")
+    if request.args.get("rech"):
+        recherche = request.args.get("rech")
+        contacts = db_query(
+        f"SELECT * FROM CONTACT WHERE first_name LIKE \"%{recherche}%\" or last_name LIKE \"%{recherche}%\" or tel LIKE \"%{recherche}%\" ORDER BY first_name")
+        if not contacts:
+            flash("Aucun contact trouvé", "red")
+            return redirect(url_for("index"))
+    else:
+        contacts = db_query("SELECT * FROM CONTACT ORDER BY first_name")
     return render_template("index.html", contacts=contacts)
 
 
