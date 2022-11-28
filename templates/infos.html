@@ -19,5 +19,9 @@
     {% endif %}
     {% endfor %}
 </ul>
-<a href="{{ url_for('contact_edit_page', contact_id=contact.id) }}" class="button-style">Modifier</a>
+<div>
+    <a href="{{ url_for('contact_edit_page', contact_id=contact.id) }}" class="button-style">Modifier</a>
+    <a href="{{ url_for('contact_delete', contact_id=contact.id) }}"
+        class="button-style alert-red button-delete">Supprimer</a>
+</div>
 {% endblock %}

@@ -2,6 +2,8 @@
     --main-bg-color: rgb(215, 215, 215);
     --light-blue-color: rgb(220, 243, 255);
     --darker-blue-color: rgb(118, 193, 255);
+    --main-red-color: rgb(255, 221, 221);
+    --darker-red-color: rgb(250, 178, 178);
 }
 
 * {
@@ -88,6 +90,15 @@ main {
     background-color: var(--main-bg-color);
 }
 
+.button-delete {
+    background-color: var(--main-red-color);
+}
+
+.button-delete:hover,
+.button-delete:focus {
+    background-color: var(--darker-red-color);
+}
+
 .contact-title {
     display: flex;
     justify-content: center;
@@ -110,6 +121,13 @@ main {
     font-size: 0.8em;
 }
 
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
 .alert {
     padding: 10px;
     border-radius: 10px;
@@ -117,7 +135,7 @@ main {
 }
 
 .alert-red {
-    background-color: rgb(255, 221, 221);
+    background-color: var(--main-red-color);
 }
 
 .alert-green {
