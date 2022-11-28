@@ -2,10 +2,11 @@
 {% block title %}Ajouter{% endblock %}
 {% block content %}
 <h1>Ajouter Un Contact</h1>
-<form class="column-list" method="post">
-  <input class="input-style" type="text" id="prenom" name="prenom" placeholder="Prénom">
-  <input class="input-style" type="text" id="nom" name="nom" placeholder="Nom">
-  <input class="input-style" type="text" id="tel" name="tel" placeholder="Téléphone">
-  <input class="button-style" type="submit" value="Ajouter">
+<form class="column-list" method="POST">
+  {{ form.csrf_token }}
+  {{ form.first_name(class="input-style") }}
+  {{ form.last_name(class="input-style") }}
+  {{ form.tel(class="input-style") }}
+  {{ form.submit(class="button-style") }}
 </form>
 {% endblock %}

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, abort, flash, request, g
 import sqlite3
+from forms import ContactForm
 
 
 app = Flask(__name__)
@@ -62,7 +63,7 @@ def index():
     if request.args.get("rech"):
         recherche = request.args.get("rech")
         contacts = db_query(
-        f"SELECT * FROM CONTACT WHERE first_name LIKE \"%{recherche}%\" or last_name LIKE \"%{recherche}%\" or tel LIKE \"%{recherche}%\" ORDER BY first_name")
+            f"SELECT * FROM CONTACT WHERE first_name LIKE \"%{recherche}%\" or last_name LIKE \"%{recherche}%\" or tel LIKE \"%{recherche}%\" ORDER BY first_name")
         if not contacts:
             flash("Aucun contact trouvé", "red")
             return redirect(url_for("index"))
@@ -73,23 +74,24 @@ def index():
 
 @app.get("/contact/add")
 def contact_add_page():
-    return render_template("add.html")
+    form = ContactForm()
+    return render_template("add.html", form=ContactForm())
 
 
 @app.post("/contact/add")
 def contact_add_post():
-    prenom = request.form['prenom']
-    nom = request.form['nom']
-    tel = request.form['tel']
-    if not tel:
-        flash("Un numéro de téléphone est nécessaire", "yellow")
-        return redirect(url_for("contact_add_post"))
-    else:
-        info_contact = (prenom,  nom, tel)
-        db_query(
-            "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=info_contact, commit=True, fetch=False)
-    flash("Le contact a été ajouté", "green")
-    return redirect(url_for("index"))
+    form = ContactForm()
+    if form.validate_on_submit():
+        if not form.tel.data:
+            flash("Un numéro de téléphone est nécessaire", "yellow")
+        else:
+            info_contact = (form.first_name.data,
+                            form.last_name.data, form.tel.data)
+            db_query(
+                "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=info_contact, commit=True, fetch=False)
+            flash("Le contact a été ajouté", "green")
+            return redirect(url_for("contact_add_page"))
+    return render_template("add.html", form=ContactForm())
 
 
 @app.get("/contact/<int:contact_id>")
