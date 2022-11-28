@@ -2,8 +2,10 @@
 {% block title %}Ajouter{% endblock %}
 {% block content %}
 <h1>Ajouter Un Contact</h1>
-<form class="column-list" method="POST">
+<form class="column-list" method="POST" enctype="multipart/form-data">
   {{ form.csrf_token }}
+  {{ form.picture.label }}
+  {{ form.picture }}
   {{ form.first_name(class="input-style") }}
   {{ form.last_name(class="input-style") }}
   {{ form.tel(class="input-style") }}

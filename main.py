@@ -1,5 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, abort, flash, request, g
 import sqlite3
+import os
+import uuid
 from forms import ContactForm
 
 
@@ -41,8 +43,20 @@ def db_query(query, args=(), first=False, commit=False, fetch=True):
         return (results[0] if results else None) if first else results
 
 
-def contact_infos_from_form(form):
-    return (form.first_name.data, form.last_name.data, form.tel.data)
+def contact_infos_from_form(form, contact=None):
+    filename = ""
+    # upload d'une photo de profil
+    if form.picture.data:
+        # sauvegarde de l'image pour accèder à son chemin d'accès
+        filename = str(uuid.uuid4())
+        form.picture.data.save(f"static/pictures/{filename}")
+        # supprimer l'ancienne image
+        if contact and contact.get("picture"):
+            os.remove(f"static/pictures/{contact.get('picture')}")
+    if contact and contact.get("picture") and not form.picture.data:
+        filename = contact.get("picture")
+    # retourner les données
+    return (form.first_name.data, form.last_name.data, form.tel.data, filename)
 
 
 @app.template_filter("contact_label")
@@ -90,7 +104,7 @@ def contact_add_post():
             flash("Un numéro de téléphone est nécessaire", "yellow")
         else:
             db_query(
-                "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=contact_infos_from_form(form), commit=True, fetch=False)
+                "INSERT INTO CONTACT(first_name, last_name, tel, picture) VALUES(?, ?, ?, ?)", args=contact_infos_from_form(form), commit=True, fetch=False)
             flash("Le contact a été ajouté", "green")
             return redirect(url_for("contact_add_page"))
     return render_template("add.html", form=ContactForm())
@@ -126,8 +140,8 @@ def contact_edit_post(contact_id):
         if not form.tel.data:
             flash("Un numéro de téléphone est nécessaire", "yellow")
         else:
-            db_query(f"UPDATE CONTACT SET (first_name, last_name, tel) = (?, ?, ?) WHERE id={contact_id}",
-                     args=contact_infos_from_form(form), commit=True, fetch=False)
+            db_query(f"UPDATE CONTACT SET (first_name, last_name, tel, picture) = (?, ?, ?, ?) WHERE id={contact_id}",
+                     args=contact_infos_from_form(form, contact), commit=True, fetch=False)
             flash("Le contact a été modifié", "green")
             return redirect(url_for("contact_infos", contact_id=contact_id))
     return render_template("edit.html", contact=contact, form=form)

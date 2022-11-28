@@ -97,6 +97,7 @@ main {
 
 .contact-title img {
     width: 60px;
+    height: 60px;
     border-radius: 100%;
     border: 2px solid black;
 }
