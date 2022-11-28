@@ -9,15 +9,14 @@
     {% endif %}
     <h1>{{ contact|contact_label }}</h1>
 </div>
-<form class="column-list">
-    {% for key, value in contact.items() %}
-    {% if key != "id" %}
-    <div>
-        <label for="{{ key }}">{{ key }}</label>
-        <input id="{{ key }}" name="{{ key }}" type="text" placeholder="{{ key }}" value="{{ value }}">
-    </div>
-    {% endif %}
-    {% endfor %}
-    <input class="button-style" type="submit" value="Enregistrer">
+<form class="column-list" method="POST">
+    {{ form.csrf_token }}
+    {{ form.first_name.label }}
+    {{ form.first_name(class="input-style") }}
+    {{ form.last_name.label }}
+    {{ form.last_name(class="input-style") }}
+    {{ form.tel.label }}
+    {{ form.tel(class="input-style") }}
+    {{ form.submit(class="button-style") }}
 </form>
 {% endblock %}

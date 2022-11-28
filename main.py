@@ -41,6 +41,10 @@ def db_query(query, args=(), first=False, commit=False, fetch=True):
         return (results[0] if results else None) if first else results
 
 
+def contact_infos_from_form(form):
+    return (form.first_name.data, form.last_name.data, form.tel.data)
+
+
 @app.template_filter("contact_label")
 def contact_label(contact):
     label = []
@@ -85,10 +89,8 @@ def contact_add_post():
         if not form.tel.data:
             flash("Un numéro de téléphone est nécessaire", "yellow")
         else:
-            info_contact = (form.first_name.data,
-                            form.last_name.data, form.tel.data)
             db_query(
-                "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=info_contact, commit=True, fetch=False)
+                "INSERT INTO CONTACT(first_name, last_name, tel) VALUES(?, ?, ?)", args=contact_infos_from_form(form), commit=True, fetch=False)
             flash("Le contact a été ajouté", "green")
             return redirect(url_for("contact_add_page"))
     return render_template("add.html", form=ContactForm())
@@ -104,12 +106,31 @@ def contact_infos(contact_id):
 
 
 @app.get("/contact/<int:contact_id>/edit")
-def contact_edit(contact_id):
+def contact_edit_page(contact_id):
     contact = db_query(
         f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
     if not contact:
         return abort(404)
-    return render_template("edit.html", contact=contact)
+    form = ContactForm(data=contact)
+    return render_template("edit.html", contact=contact, form=form)
+
+
+@app.post("/contact/<int:contact_id>/edit")
+def contact_edit_post(contact_id):
+    contact = db_query(
+        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
+    if not contact:
+        return abort(404)
+    form = ContactForm(data=contact)
+    if form.validate_on_submit():
+        if not form.tel.data:
+            flash("Un numéro de téléphone est nécessaire", "yellow")
+        else:
+            db_query(f"UPDATE CONTACT SET (first_name, last_name, tel) = (?, ?, ?) WHERE id={contact_id}",
+                     args=contact_infos_from_form(form), commit=True, fetch=False)
+            flash("Le contact a été modifié", "green")
+            return redirect(url_for("contact_infos", contact_id=contact_id))
+    return render_template("edit.html", contact=contact, form=form)
 
 
 @app.get("/contact/<int:contact_id>/delete")
