@@ -2,13 +2,14 @@ from flask import Flask, render_template, redirect, url_for, abort, flash, reque
 import sqlite3
 import os
 import uuid
+
+from config import app_config
 from forms import ContactForm
 
 
 # configuration de Flask
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "53f97a75fdd53a6404524a38"
-app.config["DATABASE_NAME"] = "repertoire.db"
+app.config.update(app_config)
 
 
 def db_tuple_to_dict(cursor, row):
