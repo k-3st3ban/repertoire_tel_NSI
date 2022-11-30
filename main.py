@@ -43,6 +43,11 @@ def db_query(query, args=(), first=False, commit=False, fetch=True):
         return (results[0] if results else None) if first else results
 
 
+def delete_contact_picture(contact):
+    if contact and contact.get("picture"):
+        os.remove(f"static/pictures/{contact.get('picture')}")
+
+
 def contact_infos_from_form(form, contact=None):
     filename = ""
     # upload d'une photo de profil
@@ -51,8 +56,7 @@ def contact_infos_from_form(form, contact=None):
         filename = str(uuid.uuid4())
         form.picture.data.save(f"static/pictures/{filename}")
         # supprimer l'ancienne image
-        if contact and contact.get("picture"):
-            os.remove(f"static/pictures/{contact.get('picture')}")
+        delete_contact_picture(contact)
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
@@ -149,6 +153,14 @@ def contact_edit_post(contact_id):
 
 @app.get("/contact/<int:contact_id>/delete")
 def contact_delete(contact_id):
+    # accéder au contact
+    contact = db_query(
+        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
+    if not contact:
+        return abort(404)
+    # supprimer la photo de profil du contact
+    delete_contact_picture(contact)
+    # supprimer le contact de la DB
     db_query(
         f"DELETE FROM CONTACT WHERE id={contact_id}", commit=True, fetch=False)
     flash("Le contact a été supprimé", "red")
