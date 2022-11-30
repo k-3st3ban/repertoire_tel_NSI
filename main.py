@@ -97,7 +97,7 @@ def index():
 @app.get("/contact/add")
 def contact_add_page():
     form = ContactForm()
-    return render_template("add.html", form=ContactForm())
+    return render_template("add.html", form=form)
 
 
 @app.post("/contact/add")
@@ -111,7 +111,7 @@ def contact_add_post():
                 "INSERT INTO CONTACT(first_name, last_name, tel, picture) VALUES(?, ?, ?, ?)", args=contact_infos_from_form(form), commit=True, fetch=False)
             flash("Le contact a été ajouté", "green")
             return redirect(url_for("contact_add_page"))
-    return render_template("add.html", form=ContactForm())
+    return render_template("add.html", form=form)
 
 
 @app.get("/contact/<int:contact_id>")
