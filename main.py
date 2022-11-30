@@ -48,6 +48,24 @@ def delete_contact_picture(contact):
         os.remove(f"static/pictures/{contact.get('picture')}")
 
 
+def contact_get(contact_id):
+    """Retourne un contact en dictionnaire
+
+    Args:
+        contact_id (int): primary key du contact demandé
+
+    Returns:
+        dict: dictionnaire du contact
+    """
+    # requête du contact à la BD
+    contact = db_query(
+        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
+    # renvoie une page 404 si le contact n'existe pas
+    if not contact:
+        return abort(404)
+    return contact
+
+
 def contact_infos_from_form(form, contact=None):
     filename = ""
     # upload d'une photo de profil
@@ -116,29 +134,21 @@ def contact_add_post():
 
 @app.get("/contact/<int:contact_id>")
 def contact_infos(contact_id):
-    contact = db_query(
-        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
-    if not contact:
-        return abort(404)
+    # accéder au contact
+    contact = contact_get(contact_id)
     return render_template("infos.html", contact=contact)
 
 
 @app.get("/contact/<int:contact_id>/edit")
 def contact_edit_page(contact_id):
-    contact = db_query(
-        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
-    if not contact:
-        return abort(404)
+    contact = contact_get(contact_id)
     form = ContactForm(data=contact)
     return render_template("edit.html", contact=contact, form=form)
 
 
 @app.post("/contact/<int:contact_id>/edit")
 def contact_edit_post(contact_id):
-    contact = db_query(
-        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
-    if not contact:
-        return abort(404)
+    contact = contact_get(contact_id)
     form = ContactForm(data=contact)
     if form.validate_on_submit():
         if not form.tel.data:
@@ -154,10 +164,7 @@ def contact_edit_post(contact_id):
 @app.get("/contact/<int:contact_id>/delete")
 def contact_delete(contact_id):
     # accéder au contact
-    contact = db_query(
-        f"SELECT * FROM CONTACT WHERE id={contact_id}", first=True)
-    if not contact:
-        return abort(404)
+    contact = contact_get(contact_id)
     # supprimer la photo de profil du contact
     delete_contact_picture(contact)
     # supprimer le contact de la DB
