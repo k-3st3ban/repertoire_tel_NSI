@@ -1,49 +1,83 @@
-from flask import Flask, render_template, redirect, url_for, abort, flash, request, g
+from flask import Flask, render_template, redirect, url_for, abort, flash, request
 import sqlite3
 import os
 import uuid
 from forms import ContactForm
 
 
+# configuration de Flask
 app = Flask(__name__)
-app.secret_key = "53f97a75fdd53a6404524a38"
-DATABASE_NAME = "repertoire.db"
+app.config["SECRET_KEY"] = "53f97a75fdd53a6404524a38"
+app.config["DATABASE_NAME"] = "repertoire.db"
 
 
-def get_db():
-    db = getattr(g, "_database", None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE_NAME)
+def db_tuple_to_dict(cursor, row):
+    """Renvoie un dictionnaire putôt qu'un tuple depuis la BD
 
-    def make_dicts(cursor, row):
-        return dict((cursor.description[idx][0], value)
-                    for idx, value in enumerate(row))
-    db.row_factory = make_dicts
+    Args:
+        cursor (sqlite3.Cursor): l'objet cursor actuel pour trouver les clés
+        row (tuple): la requête sous forme de tuple
 
-    return db
+    Returns:
+        dict: dictionnaire avec les valeurs de la requête
+    """
+    return dict((cursor.description[index][0], value)
+                for index, value in enumerate(row))
 
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, "_database", None)
-    if db is not None:
-        db.close()
+def db_get():
+    """Renvoie un objet db qui permet de faire des requêtes à la BD
+
+    Returns:
+        sqlite3.Connection: objet de connexion à la BD
+    """
+    db_obj = sqlite3.connect(app.config["DATABASE_NAME"])
+    db_obj.row_factory = db_tuple_to_dict
+    return db_obj
 
 
 def db_query(query, args=(), first=False, commit=False, fetch=True):
-    conn = get_db()
+    """Permet des requêtes à la BD
+
+    Args:
+        query (str): la requête à la BD
+        args (tuple, optional): les arguments de la requête. Defaults to ().
+        first (bool, optional): renvoie seulement le premier résultat de la requête (True)
+                                ou tous les résultats (False). Defaults to False.
+        commit (bool, optional): ajout d'une commande de commit
+                                nécessaire pour les modifications. Defaults to False.
+        fetch (bool, optional): renvoie les résultats de la requête (True)
+                                ou ne renvoie rien (False). Defaults to True.
+
+    Returns:
+        - None: quand fetch = False
+        - dict: quand fetch = True, dictionnaire qui contient les résultats de la requête
+    """
+    # ouverture des connexions
+    conn = db_get()
     cur = conn.cursor()
+    # exécution de la requête
     cur.execute(query, args)
-    if fetch == True:
+    # résultats de la requête
+    if fetch is True:
         results = cur.fetchall()
-    if commit == True:
+    # commit pour la requête
+    if commit is True:
         conn.commit()
+    # fermeture des connexions
     cur.close()
-    if fetch:
+    conn.close()
+    # renvoi des valeurs
+    if fetch is True:
         return (results[0] if results else None) if first else results
 
 
-def delete_contact_picture(contact):
+def contact_delete_picture(contact):
+    """Suppression de la photo de profil d'un contact si elle existe
+
+    Args:
+        contact (dict): contact pour lequel il faut supprimer la photo
+    """
     if contact and contact.get("picture"):
         os.remove(f"static/pictures/{contact.get('picture')}")
 
@@ -67,14 +101,23 @@ def contact_get(contact_id):
 
 
 def contact_infos_from_form(form, contact=None):
-    filename = ""
+    """Sauvegarde la photo du contact puis renvoie ses informations
+
+    Args:
+        form (forms.ContactForm): formulaire de la page avec les nouvelles données
+        contact (dict, optional): dictionnaire des données du contact actuel. Defaults to None.
+
+    Returns:
+        tuple: tuple d'informations du contact pour les arguments d'une requête à la BD
+    """
     # upload d'une photo de profil
+    filename = ""
     if form.picture.data:
         # sauvegarde de l'image pour accèder à son chemin d'accès
         filename = str(uuid.uuid4())
         form.picture.data.save(f"static/pictures/{filename}")
         # supprimer l'ancienne image
-        delete_contact_picture(contact)
+        contact_delete_picture(contact)
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
@@ -83,6 +126,14 @@ def contact_infos_from_form(form, contact=None):
 
 @app.template_filter("contact_label")
 def contact_label(contact):
+    """Renvoie le label d'un contact (prénom et nom, sinon: téléphone), à utiliser dans les templates
+
+    Args:
+        contact (dict): dictionnaire des données du contact
+
+    Returns:
+        str: label du contact
+    """
     label = []
     if not contact.get("first_name") and not contact.get("last_name"):
         label.append(contact.get("tel"))
@@ -166,7 +217,7 @@ def contact_delete(contact_id):
     # accéder au contact
     contact = contact_get(contact_id)
     # supprimer la photo de profil du contact
-    delete_contact_picture(contact)
+    contact_delete_picture(contact)
     # supprimer le contact de la DB
     db_query(
         f"DELETE FROM CONTACT WHERE id={contact_id}", commit=True, fetch=False)
