@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FileField
-from flask import redirect, url_for, flash
 
 
 class ContactForm(FlaskForm):
