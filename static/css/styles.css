@@ -1,9 +1,10 @@
 :root {
-    --main-bg-color: rgb(0, 0, 0);
     --light-blue-color: rgb(220, 243, 255);
-    --darker-blue-color: rgb(118, 193, 255);
     --main-red-color: rgb(255, 221, 221);
     --darker-red-color: rgb(250, 178, 178);
+    --main-gray: rgb(230, 230, 230);
+    --dark-gray: rgb(195, 194, 194);
+    --dark-dark-gray: rgb(181, 181, 181);
 }
 
 * {
@@ -29,7 +30,7 @@ header ul {
     padding-inline: 1.5rem;
     padding-block: 1.2rem;
     margin: 0.8rem;
-    background-color: var(--main-bg-color);
+    background-color: black;
     border-radius: 10px;
     width: 30%;
 }
@@ -57,8 +58,9 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: 30px;
+    text-align: center;
 }
 
 .main-container h1 {
@@ -70,46 +72,99 @@ main {
     font-size: 2.5rem;
 }
 
+.contact-list {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+}
+
+.contact-list li {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.contact-list a {
+    text-align: start;
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--main-gray);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-list a:hover,
+.contact-list a:focus {
+    background-color: rgb(220, 220, 220);
+}
+
+.contact-list li:not(:first-child) a {
+    border-top: 1px solid var(--dark-dark-gray);
+}
+
+.contact-list li:first-child a {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.contact-list li:last-child a {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.contact-list .contact-picture {
+    width: 40px;
+    height: 40px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--main-gray);
+    padding: 1rem;
+    border-radius: 10px;
+    width: 70%;
+    gap: 10px;
+}
+
+.search-form img {
+    width: 20px;
+}
+
+input[type=text] {
+    width: 200px;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn {
+    padding: 0.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-default {
+    background-color: var(--dark-gray);
+}
+
+.btn-default:hover,
+.btn-default:focus {
+    background-color: var(--dark-dark-gray);
+}
+
 .column-list {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     gap: 20px;
-}
-
-.button-style,
-.input-style {
-    border: 2px solid black;
-    border-radius: 5px;
-    padding: 4px 8px;
-}
-
-.input-style {
-    font-size: 1rem;
-}
-
-.input-style:focus {
-    background-color: var(--light-blue-color);
-}
-
-.button-style {
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.button-style:hover,
-.button-style:focus {
-    background-color: var(--main-bg-color);
-}
-
-.button-delete {
-    background-color: var(--main-red-color);
-}
-
-.button-delete:hover,
-.button-delete:focus {
-    background-color: var(--darker-red-color);
 }
 
 .contact-title {
@@ -119,7 +174,7 @@ main {
     gap: 20px;
 }
 
-.contact-title img {
+.contact-picture {
     width: 60px;
     height: 60px;
     border-radius: 100%;
@@ -127,18 +182,10 @@ main {
 }
 
 .contacts-number {
-    background-color: var(--darker-blue-color);
-    padding: 2px 7px;
+    background-color: var(--main-gray);
+    padding: 2px 10px;
     border-radius: 5px;
-    border: 2px solid black;
     font-size: 0.8em;
-}
-
-.buttons-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
 }
 
 .alert {

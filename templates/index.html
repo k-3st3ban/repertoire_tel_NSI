@@ -2,18 +2,19 @@
 {% block title %}Accueil{% endblock %}
 {% block content %}
 <h1>Contacts <span class="contacts-number">{{ contacts|length }}</span></h1>
-<h3>Rechercher Un Contact</h3>
-<form method="get">
-  <label for="nom">Rechercher par prenom, nom ou téléphone:</label>
-  <input type="text" id="rech" name="rech">
-  <input type="submit" value="Rechercher le contact">
+<form method="get" class="search-form">
+    <input required type="text" id="recherche" name="recherche" placeholder="Prenom, Nom, ou Téléphone">
+    <button type="submit" class="btn btn-default">
+        <img src="{{ url_for('static',filename='icons/search.png') }}">
+    </button>
 </form>
 {% if contacts|length > 0 %}
-<ul class="column-list">
+<ul class="contact-list">
     {% for contact in contacts %}
     <li>
-        <a class="button-style" href="{{ url_for('contact_infos', contact_id=contact.id) }}">
-            {{ contact|contact_label }}
+        <a href="{{ url_for('contact_infos', contact_id=contact.id) }}">
+            {% include "contact-picture.html" %}
+            <span>{{ contact|contact_label }}</span>
         </a>
     </li>
     {% endfor %}

@@ -2,11 +2,7 @@
 {% block title %}{{ contact|contact_label }}{% endblock %}
 {% block content %}
 <div class="contact-title">
-    {% if contact.picture %}
-    <img src="{{ url_for('static',filename='pictures/'+contact['picture']) }}">
-    {% else %}
-    <img src="{{ url_for('static',filename='pictures/default.png') }}">
-    {% endif %}
+    {% include "contact-picture.html" %}
     <h1>{{ contact|contact_label }}</h1>
 </div>
 <ul class="column-list">

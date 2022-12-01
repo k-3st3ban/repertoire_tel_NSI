@@ -154,8 +154,8 @@ def page_not_found(error):
 
 @app.get("/")
 def index():
-    if request.args.get("rech"):
-        recherche = request.args.get("rech")
+    if request.args.get("recherche"):
+        recherche = request.args.get("recherche")
         contacts = db_query(f"""
             SELECT * FROM CONTACT WHERE
             first_name LIKE \"%{recherche}%\" 
