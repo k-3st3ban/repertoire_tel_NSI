@@ -1,4 +1,9 @@
 <form class="column-list" method="POST" enctype="multipart/form-data">
+    {% for field, errors in form.errors.items() %}
+    <div>
+        {{ form[field].label }}: {{ ', '.join(errors) }}
+    </div>
+    {% endfor %}
     {{ form.csrf_token }}
     {{ form.picture.label }}
     {{ form.picture }}
@@ -6,9 +11,17 @@
     {{ form.first_name(class="input-style") }}
     {{ form.last_name.label }}
     {{ form.last_name(class="input-style") }}
+    {{ form.entreprise.label }}
+    {{ form.entreprise(class="input-style") }}
     {{ form.tel.label }}
     {{ form.tel(class="input-style") }}
     {{ form.tel_sec.label }}
     {{ form.tel_sec(class="input-style") }}
+    {{ form.email.label }}
+    {{ form.email(class="input-style") }}
+    {{ form.adresse.label }}
+    {{ form.adresse(class="input-style") }}
+    {{ form.naissance.label }}
+    {{ form.naissance(class="input-style", type="date") }}
     {{ form.submit(class="button-style") }}
 </form>

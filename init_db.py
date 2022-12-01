@@ -4,8 +4,8 @@ import sqlite3
 conn = sqlite3.connect('repertoire.db')
 cur = conn.cursor()
 
-# ajouter: tel secondaire, mail, entreprise, adresse, naissance, note
-cur.execute('CREATE TABLE IF NOT EXISTS "CONTACT"("id" INTEGER PRIMARY KEY AUTOINCREMENT, "first_name" TEXT, "last_name" TEXT, "tel" TEXT, "tel_sec" TEXT, "picture" TEXT)')
+# ajouter: entreprise, adresse, naissance, note
+cur.execute('CREATE TABLE IF NOT EXISTS "CONTACT"("id" INTEGER PRIMARY KEY AUTOINCREMENT, "first_name" TEXT, "last_name" TEXT, "tel" TEXT, "tel_sec" TEXT, "email" TEXT, "entreprise" TEXT, "adresse" TEXT, "naissance" TEXT, "picture" TEXT)')
 conn.commit()
 
 # fermeture des connexions

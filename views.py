@@ -124,7 +124,7 @@ def contact_infos_from_form(form, contact=None):
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
-    return (form.first_name.data, form.last_name.data, form.tel.data, form.tel_sec.data, filename)
+    return (form.first_name.data, form.last_name.data, form.entreprise.data, form.tel.data, form.tel_sec.data, form.email.data, form.entreprise.data, form.naissance.data, filename)
 
 
 @app.template_filter("contact_label")
