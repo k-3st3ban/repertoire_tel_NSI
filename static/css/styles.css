@@ -1,5 +1,5 @@
 :root {
-    --main-bg-color: rgb(215, 215, 215);
+    --main-bg-color: rgb(0, 0, 0);
     --light-blue-color: rgb(220, 243, 255);
     --darker-blue-color: rgb(118, 193, 255);
     --main-red-color: rgb(255, 221, 221);
@@ -17,17 +17,35 @@
 
 header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    padding-inline: 1.5rem;
+    padding-block: 1.2rem;
+    margin: 0.8rem;
     background-color: var(--main-bg-color);
-    padding-block: 20px;
+    border-radius: 10px;
 }
 
 header ul {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 1.5rem;
+}
+
+header button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+
+header img {
+    width: 40px;
+    transition: width 0.2s ease-in-out;
+}
+
+header img:hover {
+    width: 45px;
 }
 
 main {

@@ -12,8 +12,13 @@
 <body>
     <header>
         <ul>
-            <li><a href={{ url_for('index') }}>Accueil</a></li>
-            <li><a href={{ url_for('contact_add_page') }}>Ajouter</a></li>
+            <li><a href={{ url_for('index') }}><img src="{{ url_for('static',filename='icons/home.png') }}"></a></li>
+            <li><a href={{ url_for('contact_add_page') }}><img
+                        src="{{ url_for('static',filename='icons/add-contact.png') }}"></a></li>
+        </ul>
+        <ul>
+            <li><button onclick="closeTab()"><img src="{{ url_for('static',filename='icons/leave.png') }}"></button>
+            </li>
         </ul>
     </header>
     <main>
@@ -30,6 +35,7 @@
             {% block content %} {% endblock %}
         </section>
     </main>
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
 </body>
 
 </html>
