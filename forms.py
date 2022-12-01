@@ -8,4 +8,6 @@ class ContactForm(FlaskForm):
     last_name = StringField("Nom", render_kw={"placeholder": "Nom"})
     tel = StringField("Téléphone", render_kw={
                       "placeholder": "Téléphone"})
+    tel_sec = StringField("Téléphone Secondaire", render_kw={
+        "placeholder": "Téléphone Secondaire"})
     submit = SubmitField("Envoyer")

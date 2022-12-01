@@ -6,6 +6,8 @@ import uuid
 from config import app_config
 from forms import ContactForm
 
+import init_db
+
 
 # configuration de Flask
 app = Flask(__name__)
@@ -122,7 +124,7 @@ def contact_infos_from_form(form, contact=None):
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
-    return (form.first_name.data, form.last_name.data, form.tel.data, filename)
+    return (form.first_name.data, form.last_name.data, form.tel.data, form.tel_sec.data, filename)
 
 
 @app.template_filter("contact_label")
@@ -178,7 +180,7 @@ def contact_add_post():
             flash("Un numéro de téléphone est nécessaire", "yellow")
         else:
             db_query(
-                "INSERT INTO CONTACT(first_name, last_name, tel, picture) VALUES(?, ?, ?, ?)", args=contact_infos_from_form(form), commit=True, fetch=False)
+                f"INSERT INTO CONTACT({app.config['DATABASE_KEYS']}) VALUES({app.config['DATABASE_ARGS']})", args=contact_infos_from_form(form), commit=True, fetch=False)
             flash("Le contact a été ajouté", "green")
             return redirect(url_for("contact_add_page"))
     return render_template("add.html", form=form)
@@ -206,7 +208,7 @@ def contact_edit_post(contact_id):
         if not form.tel.data:
             flash("Un numéro de téléphone est nécessaire", "yellow")
         else:
-            db_query(f"UPDATE CONTACT SET (first_name, last_name, tel, picture) = (?, ?, ?, ?) WHERE id={contact_id}",
+            db_query(f"UPDATE CONTACT SET ({app.config['DATABASE_KEYS']}) = ({app.config['DATABASE_ARGS']}) WHERE id={contact_id}",
                      args=contact_infos_from_form(form, contact), commit=True, fetch=False)
             flash("Le contact a été modifié", "green")
             return redirect(url_for("contact_infos", contact_id=contact_id))
