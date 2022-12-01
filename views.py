@@ -156,8 +156,12 @@ def page_not_found(error):
 def index():
     if request.args.get("rech"):
         recherche = request.args.get("rech")
-        contacts = db_query(
-            f"SELECT * FROM CONTACT WHERE first_name LIKE \"%{recherche}%\" or last_name LIKE \"%{recherche}%\" or tel LIKE \"%{recherche}%\" ORDER BY first_name")
+        contacts = db_query(f"""
+            SELECT * FROM CONTACT WHERE
+            first_name LIKE \"%{recherche}%\" 
+            or last_name LIKE \"%{recherche}%\" 
+            or tel LIKE \"%{recherche}%\"
+                ORDER BY first_name""")
         if not contacts:
             flash("Aucun contact trouvé", "red")
             return redirect(url_for("index"))
