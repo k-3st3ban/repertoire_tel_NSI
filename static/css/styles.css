@@ -17,13 +17,8 @@
 
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding-inline: 1.5rem;
-    padding-block: 1.2rem;
-    margin: 0.8rem;
-    background-color: var(--main-bg-color);
-    border-radius: 10px;
 }
 
 header ul {
@@ -31,12 +26,12 @@ header ul {
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
-}
-
-header button {
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
+    padding-inline: 1.5rem;
+    padding-block: 1.2rem;
+    margin: 0.8rem;
+    background-color: var(--main-bg-color);
+    border-radius: 10px;
+    width: 30%;
 }
 
 header img {

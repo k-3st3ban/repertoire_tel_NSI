@@ -16,10 +16,6 @@
             <li><a href={{ url_for('contact_add_page') }}><img
                         src="{{ url_for('static',filename='icons/add-contact.png') }}"></a></li>
         </ul>
-        <ul>
-            <li><button onclick="closeTab()"><img src="{{ url_for('static',filename='icons/leave.png') }}"></button>
-            </li>
-        </ul>
     </header>
     <main>
         {% with messages = get_flashed_messages(with_categories=True) %}
@@ -35,7 +31,6 @@
             {% block content %} {% endblock %}
         </section>
     </main>
-    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
 </body>
 
 </html>
