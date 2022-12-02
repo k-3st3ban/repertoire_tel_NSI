@@ -7,17 +7,24 @@
 </div>
 <ul class="column-list">
     {% for key, value in contact.items() %}
-    {% if key not in ["id", "picture"] %}
+    {% if key not in ["id", "picture"] and value %}
     <li>
-        <h3>{{ key }}</h3>
+        <h3>{{ key|database_key_to_txt }}</h3>
+        {% if key in ["tel", "tel_sec"] %}
+        <a class="contact-link" href="tel:{{ value }}">{{ value }}</a>
+        {% elif key == "email" %}
+        <a class="contact-link" href="mailto:{{ value }}">{{ value }}</a>
+        {% elif key == "adresse" %}
+        <a class="contact-link" href="http://maps.google.com/?q={{ value|urlencode }}" target="_blank">{{ value }}</a>
+        {% else %}
         <p>{{ value }}</p>
+        {% endif %}
     </li>
     {% endif %}
     {% endfor %}
 </ul>
-<div>
-    <a href="{{ url_for('contact_edit_page', contact_id=contact.id) }}" class="button-style">Modifier</a>
-    <a href="{{ url_for('contact_delete', contact_id=contact.id) }}"
-        class="button-style alert-red button-delete">Supprimer</a>
+<div class="contact-actions">
+    <a href="{{ url_for('contact_edit_page', contact_id=contact.id) }}" class="btn btn-default">Modifier</a>
+    <a href="{{ url_for('contact_delete', contact_id=contact.id) }}" class="btn btn-red">Supprimer</a>
 </div>
 {% endblock %}

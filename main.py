@@ -124,7 +124,7 @@ def contact_infos_from_form(form, contact=None):
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
-    return (form.first_name.data, form.last_name.data, form.entreprise.data, form.tel.data, form.tel_sec.data, form.email.data, form.entreprise.data, form.naissance.data, filename)
+    return (form.first_name.data, form.last_name.data, form.entreprise.data, form.tel.data, form.tel_sec.data, form.email.data, form.adresse.data, form.naissance.data, filename)
 
 
 @app.template_filter("contact_label")
@@ -145,6 +145,19 @@ def contact_label(contact):
     if contact.get("last_name"):
         label.append(contact.get("last_name"))
     return " ".join(label)
+
+
+@app.template_filter("database_key_to_txt")
+def database_key_to_txt(key):
+    """Renvoie une clé plus compréhensible depuis une clé de la BD
+
+    Args:
+        key (str): la clé de dictionnaire à convertir
+
+    Returns:
+        str: la clé sous format plus compréhensible (ex: "first_name" -> "Prénom")
+    """
+    return app.config["DATABASE_KEYS_TO_TXT"][key]
 
 
 @app.errorhandler(404)

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, TelField, EmailField, DateField
+from wtforms import StringField, SubmitField, FileField, TelField, EmailField
 
 
 class ContactForm(FlaskForm):
@@ -18,4 +18,3 @@ class ContactForm(FlaskForm):
         "placeholder": "Adresse"})
     naissance = StringField("Naissance", render_kw={
         "placeholder": "Naissance"})
-    submit = SubmitField("Envoyer")
