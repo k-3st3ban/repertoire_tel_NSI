@@ -1,78 +1,20 @@
-from flask import Flask, render_template, redirect, url_for, abort, flash, request
-import sqlite3
+"""Fichier principal de l'application"""
 import os
 import uuid
+from flask import Flask, render_template, redirect, url_for, abort, flash, request
 
 from config import app_config
 from forms import ContactForm
+from db import db_query, db_init
 
-import init_db
+
+# initialisation de la BD
+db_init()
 
 
 # configuration de Flask
 app = Flask(__name__)
 app.config.update(app_config)
-
-
-def db_tuple_to_dict(cursor, row):
-    """Renvoie un dictionnaire putôt qu'un tuple depuis la BD
-
-    Args:
-        cursor (sqlite3.Cursor): l'objet cursor actuel pour trouver les clés
-        row (tuple): la requête sous forme de tuple
-
-    Returns:
-        dict: dictionnaire avec les valeurs de la requête
-    """
-    return dict((cursor.description[index][0], value)
-                for index, value in enumerate(row))
-
-
-def db_get():
-    """Renvoie un objet db qui permet de faire des requêtes à la BD
-
-    Returns:
-        sqlite3.Connection: objet de connexion à la BD
-    """
-    db_obj = sqlite3.connect(app.config["DATABASE_NAME"])
-    db_obj.row_factory = db_tuple_to_dict
-    return db_obj
-
-
-def db_query(query, args=(), first=False, commit=False, fetch=True):
-    """Permet des requêtes à la BD
-
-    Args:
-        query (str): la requête à la BD
-        args (tuple, optional): les arguments de la requête. Defaults to ().
-        first (bool, optional): renvoie seulement le premier résultat de la requête (True)
-                                ou tous les résultats (False). Defaults to False.
-        commit (bool, optional): ajout d'une commande de commit
-                                nécessaire pour les modifications. Defaults to False.
-        fetch (bool, optional): renvoie les résultats de la requête (True)
-                                ou ne renvoie rien (False). Defaults to True.
-
-    Returns:
-        - None: quand fetch = False
-        - dict: quand fetch = True, dictionnaire qui contient les résultats de la requête
-    """
-    # ouverture des connexions
-    conn = db_get()
-    cur = conn.cursor()
-    # exécution de la requête
-    cur.execute(query, args)
-    # résultats de la requête
-    if fetch is True:
-        results = cur.fetchall()
-    # commit pour la requête
-    if commit is True:
-        conn.commit()
-    # fermeture des connexions
-    cur.close()
-    conn.close()
-    # renvoi des valeurs
-    if fetch is True:
-        return (results[0] if results else None) if first else results
 
 
 def contact_delete_picture(contact):
@@ -124,12 +66,13 @@ def contact_infos_from_form(form, contact=None):
     if contact and contact.get("picture") and not form.picture.data:
         filename = contact.get("picture")
     # retourner les données
-    return (form.first_name.data, form.last_name.data, form.entreprise.data, form.tel.data, form.tel_sec.data, form.email.data, form.adresse.data, form.naissance.data, filename)
+    return (form.first_name.data, form.last_name.data, form.entreprise.data, form.tel.data,
+            form.tel_sec.data, form.email.data, form.adresse.data, form.naissance.data, filename)
 
 
 @app.template_filter("contact_label")
 def contact_label(contact):
-    """Renvoie le label d'un contact (prénom et nom, sinon: téléphone), à utiliser dans les templates
+    """Renvoie le label d'un contact (prénom et nom, sinon téléphone), à utiliser dans les templates
 
     Args:
         contact (dict): dictionnaire des données du contact
@@ -149,7 +92,7 @@ def contact_label(contact):
 
 @app.template_filter("database_key_to_txt")
 def database_key_to_txt(key):
-    """Renvoie une clé plus compréhensible depuis une clé de la BD
+    """Renvoie une clé plus compréhensible depuis une clé de la BD, à utiliser dans les templates
 
     Args:
         key (str): la clé de dictionnaire à convertir
@@ -162,11 +105,14 @@ def database_key_to_txt(key):
 
 @app.errorhandler(404)
 def page_not_found(error):
+    """Mise en place d'une page 404 personnalisée"""
     return render_template("404.html", title="404"), 404
 
 
 @app.get("/")
 def index():
+    """Page d'accueil: liste et recherche de contacts"""
+    # requête personnalisée quand le paramètre "recherche" est dans l'URL
     if request.args.get("recherche"):
         recherche = request.args.get("recherche")
         contacts = db_query(f"""
@@ -178,6 +124,7 @@ def index():
         if not contacts:
             flash("Aucun contact trouvé", "red")
             return redirect(url_for("index"))
+    # requête normale (tous les contacts)
     else:
         contacts = db_query("SELECT * FROM CONTACT ORDER BY first_name")
     return render_template("index.html", contacts=contacts)
@@ -185,19 +132,24 @@ def index():
 
 @app.get("/contact/add")
 def contact_add_page():
+    """Page GET d'ajout de contacts: renvoie du formulaire d'ajout"""
     form = ContactForm()
     return render_template("add.html", form=form)
 
 
 @app.post("/contact/add")
 def contact_add_post():
+    """Page POST d'ajout de contacts: validations et ajout des données du contact"""
     form = ContactForm()
     if form.validate_on_submit():
+        # vérification téléphone
         if not form.tel.data:
             flash("Un numéro de téléphone est nécessaire", "yellow")
+        # ajout dans la BD
         else:
-            db_query(
-                f"INSERT INTO CONTACT({app.config['DATABASE_KEYS']}) VALUES({app.config['DATABASE_ARGS']})", args=contact_infos_from_form(form), commit=True, fetch=False)
+            db_query(f"INSERT INTO CONTACT({app.config['DATABASE_KEYS']})\
+                    VALUES({app.config['DATABASE_ARGS']})",
+                     args=contact_infos_from_form(form), commit=True, fetch=False)
             flash("Le contact a été ajouté", "green")
             return redirect(url_for("contact_add_page"))
     return render_template("add.html", form=form)
@@ -205,13 +157,14 @@ def contact_add_post():
 
 @app.get("/contact/<int:contact_id>")
 def contact_infos(contact_id):
-    # accéder au contact
+    """Page d'infos d'un contact spécifique"""
     contact = contact_get(contact_id)
     return render_template("infos.html", contact=contact)
 
 
 @app.get("/contact/<int:contact_id>/edit")
 def contact_edit_page(contact_id):
+    """Page GET de modifications de contact: renvoie du formulaire de modifications"""
     contact = contact_get(contact_id)
     form = ContactForm(data=contact)
     return render_template("edit.html", contact=contact, form=form)
@@ -219,13 +172,18 @@ def contact_edit_page(contact_id):
 
 @app.post("/contact/<int:contact_id>/edit")
 def contact_edit_post(contact_id):
+    """Page POST de modifications de contact: validations et modifications des données du contact"""
     contact = contact_get(contact_id)
     form = ContactForm(data=contact)
     if form.validate_on_submit():
+        # vérification du téléphone
         if not form.tel.data:
             flash("Un numéro de téléphone est nécessaire", "yellow")
+        # modifications dans la BD
         else:
-            db_query(f"UPDATE CONTACT SET ({app.config['DATABASE_KEYS']}) = ({app.config['DATABASE_ARGS']}) WHERE id={contact_id}",
+            db_query(f"UPDATE CONTACT SET\
+                ({app.config['DATABASE_KEYS']}) = ({app.config['DATABASE_ARGS']})\
+                WHERE id={contact_id}",
                      args=contact_infos_from_form(form, contact), commit=True, fetch=False)
             flash("Le contact a été modifié", "green")
             return redirect(url_for("contact_infos", contact_id=contact_id))
@@ -234,11 +192,11 @@ def contact_edit_post(contact_id):
 
 @app.get("/contact/<int:contact_id>/delete")
 def contact_delete(contact_id):
-    # accéder au contact
+    """Page de suppression d'un contact"""
     contact = contact_get(contact_id)
     # supprimer la photo de profil du contact
     contact_delete_picture(contact)
-    # supprimer le contact de la DB
+    # supprimer le contact de la BD
     db_query(
         f"DELETE FROM CONTACT WHERE id={contact_id}", commit=True, fetch=False)
     flash("Le contact a été supprimé", "red")
