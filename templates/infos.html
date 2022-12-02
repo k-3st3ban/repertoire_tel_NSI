@@ -25,6 +25,7 @@
 </ul>
 <div class="contact-actions">
     <a href="{{ url_for('contact_edit_page', contact_id=contact.id) }}" class="btn btn-default">Modifier</a>
-    <a href="{{ url_for('contact_delete', contact_id=contact.id) }}" class="btn btn-red">Supprimer</a>
+    <a href="{{ url_for('contact_delete', contact_id=contact.id) }}" class="btn btn-red"
+        onclick="deleteContact(event)">Supprimer</a>
 </div>
 {% endblock %}
