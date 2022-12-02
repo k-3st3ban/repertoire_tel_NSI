@@ -203,4 +203,5 @@ def contact_delete(contact_id):
     return redirect(url_for("index"))
 
 
-app.run(debug=True)
+# app.run(debug=True) # pour le développement
+app.run()
