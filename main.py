@@ -115,11 +115,25 @@ def index():
     # requête personnalisée quand le paramètre "recherche" est dans l'URL
     if request.args.get("recherche"):
         recherche = request.args.get("recherche")
+        prenom_suppose = "" 
+        nom_suppose = ""
+        separations = 0 #Séparation du nom et prénom du aux limitations SQL si il y a recherche par les 2
+        for lettre in recherche: 
+            if lettre == " ":
+                if separations > 0: #Dans le cas d'un nom séparé, ajout d'un espace
+                    nom_suppose += " "
+                separations += 1
+            elif separations == 0:
+                prenom_suppose += lettre
+            else:
+                nom_suppose += lettre
         contacts = db_query(f"""
             SELECT * FROM CONTACT WHERE
             first_name LIKE \"%{recherche}%\" 
             or last_name LIKE \"%{recherche}%\" 
             or tel LIKE \"%{recherche}%\"
+            or first_name LIKE \"%{prenom_suppose}%\" and last_name LIKE \"%{nom_suppose}%\"
+            or first_name LIKE \"%{nom_suppose}%\" and last_name LIKE \"%{prenom_suppose}%\"
                 ORDER BY first_name""")
         if not contacts:
             flash("Aucun contact trouvé", "red")
