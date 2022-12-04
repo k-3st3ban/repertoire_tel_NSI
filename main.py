@@ -115,25 +115,15 @@ def index():
     # requête personnalisée quand le paramètre "recherche" est dans l'URL
     if request.args.get("recherche"):
         recherche = request.args.get("recherche")
-        prenom_suppose = "" 
-        nom_suppose = ""
-        separations = 0 #Séparation du nom et prénom du aux limitations SQL si il y a recherche par les 2
-        for lettre in recherche: 
-            if lettre == " ":
-                if separations > 0: #Dans le cas d'un nom séparé, ajout d'un espace
-                    nom_suppose += " "
-                separations += 1
-            elif separations == 0:
-                prenom_suppose += lettre
-            else:
-                nom_suppose += lettre
+        # requête de recherche
+        # first_name || ' ' || last_name pour rechercher dans le prénom et nom
+        # last_name || ' ' || first_name pour rechercher dans le nom et prénom (ordre inversé)
+        # REPLACE(tel, ' ', '') on supprime les espaces dans les numéros de tél
         contacts = db_query(f"""
             SELECT * FROM CONTACT WHERE
-            first_name LIKE \"%{recherche}%\" 
-            or last_name LIKE \"%{recherche}%\" 
-            or tel LIKE \"%{recherche}%\"
-            or first_name LIKE \"%{prenom_suppose}%\" and last_name LIKE \"%{nom_suppose}%\"
-            or first_name LIKE \"%{nom_suppose}%\" and last_name LIKE \"%{prenom_suppose}%\"
+            (first_name || ' ' || last_name) LIKE \"%{recherche}%\"
+            or (last_name || ' ' || first_name) LIKE \"%{recherche}%\"
+            or REPLACE(tel, ' ', '') LIKE \"%{recherche.replace(' ', '')}%\"
                 ORDER BY first_name""")
         if not contacts:
             flash("Aucun contact trouvé", "red")
@@ -217,5 +207,5 @@ def contact_delete(contact_id):
     return redirect(url_for("index"))
 
 
-# app.run(debug=True) # pour le développement
-app.run()
+app.run(debug=True) # pour le développement
+# app.run()
