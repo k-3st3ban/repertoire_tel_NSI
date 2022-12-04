@@ -7,8 +7,8 @@ Projet disponible sur https://github.com/k-3st3ban/repertoire_tel_NSI
 
 ### Principe de fonctionnement
 Ce code permet de lancer un site local ayant le fonctionnement d'un annuaire de contacts.
-Une base de données SQL est utilisée et manipulée avec la bibliotheque python `sqlite3`.
-Le site internet est lancé avec la bibliotheque `Flask`.
+Une base de données SQL est utilisée et manipulée avec la bibliothèque python `sqlite3`.
+Le site internet est lancé avec la bibliothèque `Flask`.
 Il contient plusieurs pages codées en HTML et Jinja, avec du CSS et JS, et des formulaires d'ajout et modifications de contacts avec la librairie `Flask-WTF` (`FlaskForm`).
 
 ### Notice d'utilisation
